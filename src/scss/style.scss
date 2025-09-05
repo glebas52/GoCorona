@@ -1,0 +1,677 @@
+@use "nullstyle";
+@use "fonts";
+
+body {
+   font-family: Rubik;
+   font-size: 12px;
+   color: #616161;
+}
+
+$maxWidth: 1920;
+$maxWidthContainer: 1080;
+$minWidth: 320;
+@mixin adaptiv-dual(
+   $property,
+   $minSize,
+   $defaultSize,
+   $maxSize,
+   $minWidth: $minWidth,
+   $breakpoint: $maxWidthContainer,
+   $maxWidth: $maxWidth
+) {
+   $addSizeMin: $defaultSize - $minSize;
+   $addSizeMax: $maxSize - $defaultSize;
+
+   // Минимальный размер (меньше брейкпоинта)
+   @media (max-width: #{$breakpoint + px}) {
+      #{$property}: calc(
+         #{$minSize + px} + #{$addSizeMin} * ((100vw - #{$minWidth + px}) / #{$breakpoint - $minWidth})
+      );
+   }
+
+   // Дефолтный размер (на брейкпоинте)
+   @media (min-width: #{$breakpoint + px}) and (max-width: #{$breakpoint + 100 + px}) {
+      #{$property}: $defaultSize + px;
+   }
+
+   // Максимальный размер (от брейкпоинта до maxWidth)
+   @media (min-width: #{$breakpoint + 100 + px}) and (max-width: #{$maxWidth + px}) {
+      #{$property}: calc(
+         #{$defaultSize + px} + #{$addSizeMax} *
+            ((100vw - #{$breakpoint + 100 + px}) / #{$maxWidth - $breakpoint - 100})
+      );
+   }
+
+   // Фиксированный максимальный размер (больше maxWidth)
+   @media (min-width: #{$maxWidth + px}) {
+      #{$property}: $maxSize + px;
+   }
+}
+
+//------------------------Общие стили-----------------------------
+.wrapper {
+   min-height: 100%;
+   display: flex;
+   flex-direction: column;
+   overflow: hidden;
+}
+
+[class*="__container"] {
+   max-width: #{$maxWidthContainer + px};
+   margin: 0 auto;
+   padding: 0 15px;
+   @include adaptiv-dual("padding-left", 10, 15, 15);
+   @include adaptiv-dual("padding-right", 10, 15, 15);
+}
+.title {
+   font-weight: 700;
+   color: black;
+   line-height: 126%;
+   @include adaptiv-dual("font-size", 20, 44, 44);
+}
+.text {
+   @include adaptiv-dual("font-size", 10, 12, 12);
+}
+
+.button {
+   display: inline-block;
+   font-family: Raleway;
+   font-weight: 800;
+   font-size: 10px;
+   line-height: 12px;
+   letter-spacing: 1px;
+   text-transform: uppercase;
+   color: white;
+
+   padding: 14px 30px;
+   background-color: #ec5863;
+   border-radius: 5px;
+   &:hover {
+      background-color: #c54750;
+      transition: background-color 0.3s ease 0s;
+   }
+}
+.block-info {
+   & > *:not(:last-child) {
+      margin: 0px 0px 15px 0px;
+   }
+
+   @media (max-width: 575.9px) {
+      margin: 0px 0px 30px 0px;
+   }
+}
+//------------------------header-----------------------------
+.header {
+   font-family: Raleway;
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   z-index: 50;
+}
+.header__container {
+}
+.header__body {
+   display: flex;
+   align-items: center;
+   @include adaptiv-dual("padding-top", 20, 40, 40);
+   @include adaptiv-dual("padding-bottom", 20, 40, 40);
+}
+.header__title {
+   color: black;
+   font-weight: 700;
+   display: flex;
+   align-items: center;
+   position: relative;
+   z-index: 5;
+   font-family: Rubik;
+   & > p {
+      @include adaptiv-dual("font-size", 12, 18, 18);
+   }
+
+   & span {
+      color: #ec5863;
+   }
+}
+.header__burger {
+   flex: 0 0 30px;
+   height: 18px;
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   cursor: pointer;
+   &::before,
+   &::after,
+   & span {
+      content: "";
+      width: 100%;
+      background-color: black;
+      height: 2px;
+   }
+}
+
+.menu {
+   flex: 1 1 auto;
+}
+.menu__list {
+   & li {
+      @include adaptiv-dual("margin-right", 10, 40, 40, 576);
+   }
+}
+.menu__link {
+   color: black;
+   font-size: 10px;
+   font-weight: 800;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+}
+.button_blue {
+   background-color: #4285f4;
+   &:hover {
+      background-color: #3a75d3;
+      transition: background-color 0.3s ease 0s;
+   }
+}
+.header__button {
+   display: flex;
+   justify-content: end;
+   flex: 0 0 250px;
+   @include adaptiv-dual("flex-basis", 150, 250, 250, 576);
+}
+@media (max-width: 768px) {
+   .menu__list {
+      justify-content: center;
+   }
+}
+@media (max-width: 576px) {
+   .header__menu {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      background-color: #fff;
+      height: 100%;
+      padding: 80px 15px;
+      text-align: center;
+      li {
+         margin: 0px 0px 30px 0px;
+      }
+      .menu__link {
+         font-size: 30px;
+      }
+   }
+   .header__body {
+      justify-content: space-between;
+   }
+   .header__button {
+      display: none;
+   }
+   .header__title {
+      p {
+         display: none;
+      }
+   }
+}
+@media (min-width: 576px) {
+   .header__burger {
+      display: none;
+   }
+   .menu__list {
+      display: flex;
+      justify-content: end;
+   }
+}
+
+//---------------Main--------------
+.main {
+   flex: 1 1 auto;
+}
+.get-started {
+   background-color: #fafbfd;
+
+   &__container {
+      @include adaptiv-dual("padding-top", 80, 120, 120);
+      @include adaptiv-dual("padding-bottom", 36, 48, 48);
+      @include adaptiv-dual("padding-left", 10, 15, 15);
+      @include adaptiv-dual("padding-right", 10, 15, 15);
+      @media (min-width: 576px) {
+         flex-wrap: wrap;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         position: relative;
+      }
+      &::before {
+         content: "";
+         position: absolute;
+         background-color: #ec5863;
+
+         top: 0;
+         height: 100%;
+         width: 100vh;
+         border-bottom-left-radius: 30px;
+         border-top-left-radius: 30px;
+         transform: translate(100%, 0);
+         @include adaptiv-dual("right", 165, 267, 267, 576, 992);
+         @media (max-width: 576px) {
+            display: none;
+         }
+      }
+   }
+   &__content {
+      @media ((min-width: 576px) and (max-width: #{$maxWidthContainer + px}) ) {
+         max-width: 410px;
+      }
+      @media (min-width: 576px) {
+         flex: 0 1 48%;
+         padding: 0px 20px 0px 20px;
+      }
+   }
+
+   &__title {
+      color: black;
+      margin: 0px 0px 12px 0px;
+      line-height: 126%;
+      font-style: normal;
+      font-weight: 700;
+      & span {
+         color: #4285f4;
+      }
+   }
+   &__text {
+   }
+   &__button {
+      white-space: nowrap;
+   }
+   &__image {
+      z-index: 2;
+      @media (min-width: 576px) {
+         flex: 0 1 52%;
+      }
+      @media (max-width: 575.9px) {
+         padding: 30px 0px;
+      }
+      & img {
+         max-width: 100%;
+      }
+   }
+}
+
+.video-block {
+   flex: 1 1 100%;
+   padding: 60px 0px 0px 20px;
+   @media (max-width: 575.9px) {
+      padding: 0px;
+   }
+   &__video {
+      margin: 0px 12px 0px 0px;
+      border-radius: 50%;
+      border: 1px solid #4285f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 0 0 45px;
+      height: 45px;
+      position: relative;
+      & img {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-30%, -50%);
+      }
+   }
+   &__title {
+      font-size: 13px;
+      margin: 0px 0px 5px 0px;
+      color: #b0b0b0;
+   }
+   &__subtitle {
+      color: black;
+      text-transform: uppercase;
+   }
+   &__info {
+   }
+   &__link {
+      align-items: center;
+      display: inline-flex;
+   }
+}
+//-----------------stay-safe-----------
+
+.stay-safe {
+   &__container {
+      align-items: center;
+      display: flex;
+      @include adaptiv-dual("padding-top", 40, 80, 80);
+      @include adaptiv-dual("padding-bottom", 40, 80, 80);
+      @include adaptiv-dual("padding-left", 10, 15, 15);
+      @include adaptiv-dual("padding-right", 10, 15, 15);
+      @media (max-width: 768px) {
+         flex-direction: column-reverse;
+      }
+   }
+   &__media {
+      flex: 0 1 50%;
+      @include adaptiv-dual("padding-left", 0, 47, 47, 992);
+   }
+   &__effects-block {
+      width: 373px;
+      text-align: center;
+      position: relative;
+      padding: 56px 0 27px 0;
+      @media (max-width: 479px) {
+         width: 290px;
+      }
+   }
+   &__image {
+      display: inline-block;
+      position: relative;
+      width: 61.5%;
+      & img {
+         z-index: 2;
+         position: relative;
+         max-width: 100%;
+      }
+   }
+   &__item {
+      position: absolute;
+      border-radius: 30px;
+      background-color: #ec5863;
+
+      &_1 {
+         top: 0px;
+         left: 0px;
+         width: 147px;
+         height: 147px;
+      }
+
+      &_2 {
+         bottom: 0px;
+         left: 32px;
+         width: 77px;
+         height: 77px;
+      }
+
+      &_3 {
+         bottom: 109px;
+         right: 34px;
+         width: 77px;
+         height: 77px;
+      }
+   }
+   &__content {
+      flex: 0 1 50%;
+      @media (max-width: 768px) {
+         margin: 0px 0px 30px 0px;
+      }
+   }
+
+   &__title {
+      & span {
+         color: #ec5863;
+      }
+   }
+}
+
+.Expert {
+   background-color: #fafbfd;
+   @include adaptiv-dual("padding-top", 53, 103, 103);
+   @include adaptiv-dual("padding-bottom", 53, 116, 116);
+   &__numbers {
+   }
+   &__talk-experts {
+   }
+}
+.numbers {
+   max-width: 654px;
+   margin: 0 auto;
+   position: relative;
+   @include adaptiv-dual("margin-bottom", 60, 80, 80);
+
+   &__body {
+      background-color: #fff;
+      padding: 28px 80px;
+      border-radius: 16px;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      box-shadow: 0px 3px 20px rgba(0, 0, 0, 0.2);
+
+      @media (max-width: 576px) {
+         flex-direction: column;
+
+         margin: 0 auto;
+      }
+   }
+   &__column {
+      flex: 0 1 25%;
+      &:not(:last-child) {
+         flex: 0 1 50%;
+
+         @media (max-width: 576px) {
+            margin: 0px 0px 15px 0px;
+         }
+      }
+   }
+   &__item {
+      display: inline-block;
+      text-align: center;
+   }
+   &__decor {
+      position: absolute;
+      border-radius: 30px;
+      background-color: #ec5863;
+
+      &_1 {
+         top: 0;
+         right: -55px;
+         width: 127px;
+         height: 127px;
+         transform: rotate(-30deg);
+      }
+
+      &_2 {
+         top: -40px;
+         width: 97px;
+         height: 97px;
+         right: 50%;
+         transform: rotate(20deg);
+      }
+
+      &_3 {
+         transform: rotate(-30deg);
+         bottom: -31px;
+         left: -20px;
+         width: 65px;
+         height: 65px;
+         border-radius: 16px;
+      }
+   }
+
+   &__title {
+      font-weight: bold;
+      color: #ec5863;
+      @include adaptiv-dual("font-size", 24, 36, 36);
+   }
+
+   &__subtitle {
+      font-weight: bold;
+      @include adaptiv-dual("font-size", 9, 11, 11);
+   }
+}
+
+.talk-experts {
+   &__body {
+      & > *:not(:last-child) {
+         @media (max-width: 768px) {
+            margin: 0px 0px 20px 0px;
+         }
+      }
+      @media (min-width: 768px) {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+      }
+   }
+
+   &__content {
+      @media (min-width: 768px) {
+         max-width: 400px;
+         margin: 0px 20px 0px 0px;
+         flex: 0 1 50%;
+      }
+   }
+   &__title {
+      & span {
+         color: #4285f4;
+      }
+   }
+   &__video {
+      position: relative;
+      padding: 0 0px 31% 0px;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7);
+      flex: 0 1 50%;
+      @media (max-width: 768px) {
+         padding: 0 0px 58% 0px;
+      }
+      & iframe {
+         position: absolute;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         object-fit: cover;
+      }
+   }
+}
+
+.health-care {
+   @include adaptiv-dual("padding-top", 30, 80, 80);
+   @include adaptiv-dual("padding-bottom", 30, 40, 40);
+   &__container {
+   }
+
+   &__block-info {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+      @include adaptiv-dual("margin-bottom", 30, 45, 45);
+   }
+
+   &__title {
+      & span {
+         color: #ec5863;
+      }
+   }
+
+   &__text {
+   }
+
+   &__row {
+      @include adaptiv-dual("margin-bottom", 90, 75, 75, 320, 768, 768);
+      @media (min-width: 768px) {
+         display: flex;
+         @include adaptiv-dual("gap", 40, 72, 72, 767);
+      }
+   }
+
+   &__column {
+      position: relative;
+      @media (min-width: 768px) {
+         flex: 0 1 33.333%;
+         display: flex;
+      }
+      @media (max-width: 768px) {
+         max-width: 80%;
+         margin: 0px auto 30px auto;
+      }
+      &::before,
+      &::after {
+         content: "";
+         position: absolute;
+         background-color: #ec5863;
+         border-radius: 16px;
+      }
+      &_1 {
+         &::before {
+            width: 65px;
+            height: 65px;
+            left: -17px;
+            bottom: -35px;
+            transform: rotate(-30deg);
+         }
+         &::after {
+            width: 97px;
+            height: 97px;
+            right: -50px;
+            top: 35px;
+            border-radius: 30px;
+            transform: rotate(22deg);
+         }
+      }
+      &_2 {
+      }
+      &_3 {
+         &::before {
+            width: 127px;
+            height: 127px;
+            left: -117px;
+            bottom: -26px;
+            transform: rotate(-30deg);
+            border-radius: 30px;
+            @media (max-width: 768px) {
+               left: -57px;
+            }
+         }
+         &::after {
+            width: 65px;
+            height: 65px;
+            right: -17px;
+            top: -35px;
+
+            transform: rotate(-30deg);
+         }
+      }
+   }
+
+   &__buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      @include adaptiv-dual("gap", 10, 56, 56, 479);
+      @media (max-width: 479px) {
+         flex-direction: column;
+      }
+   }
+
+   &__button {
+   }
+}
+
+.item-health-care {
+   text-align: center;
+   padding: 40px 25px;
+   background-color: white;
+   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+   position: relative;
+   border-radius: 15px;
+   z-index: 2;
+   &__image {
+      margin: 0px 0px 60px 0px;
+   }
+
+   &__title {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0px 0px 7px 0px;
+   }
+
+   &__subtitle {
+   }
+}
+
+//---------------Footer--------------
+.footer {
+}
